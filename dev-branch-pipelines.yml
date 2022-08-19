@@ -10,7 +10,7 @@ variables:
   agent_name: ajdevvm
   docker_service_connection: ganjiacr
   container_registry: ganjiacr
-  container_dev_repo_name: dev_application
+  container_qa_repo_name: QA_application
   environment: development.dev
   namespace: dev
   tag: $(Build.SourceVersion)
@@ -27,7 +27,7 @@ stages:
           - task: Docker@2
             inputs:
               containerRegistry: $(container_registry)
-              repository: $(container_dev_repo_name)
+              repository: $(container_qa_repo_name)
               command: 'buildAndPush'
               Dockerfile: '**/dockerfile'
               tags: $(tag)
@@ -79,6 +79,6 @@ stages:
                     manifests: |
                       $(System.ArtifactsDirectory)/manifests/deployment.yaml
                       $(System.ArtifactsDirectory)/manifests/services.yaml
-                    containers: 'ganjiacr.azurecr.io/dev_application:$(tag)'
+                    containers: 'ganjiacr.azurecr.io/${{variables.container_qa_repo_name}}:$(tag)'
                     imagePullSecrets: 'acr-secret-02'
         
