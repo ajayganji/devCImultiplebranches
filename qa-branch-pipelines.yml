@@ -1,9 +1,10 @@
 trigger:
   branches:
     include:
-      - dev
+      - qa
     exclude:  
       - main
+      - dev
 
 variables:
   agent_pool: userpool
