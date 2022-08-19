@@ -68,7 +68,7 @@ stages:
                     #kubernetesServiceConnection: 'devenv-aksdevops-dev-1660734623942' # environment will take the service connection automatically
                     namespace: $(namespace)
                     secretType: 'dockerRegistry'
-                    secretName: 'acr-secret-01'
+                    secretName: 'acr-secret-02'
                     dockerRegistryEndpoint: $(docker_service_connection)
 
                 - task: KubernetesManifest@0
@@ -80,5 +80,5 @@ stages:
                       $(System.ArtifactsDirectory)/manifests/deployment.yaml
                       $(System.ArtifactsDirectory)/manifests/services.yaml
                     containers: 'ganjiacr.azurecr.io/ajdevops/dev_application:$(tag)'
-                    imagePullSecrets: 'acr-secret-01'
+                    imagePullSecrets: 'acr-secret-02'
         
