@@ -1,0 +1,86 @@
+trigger:
+  branches:
+    include:
+      - dev
+
+variables:
+  agent_pool: userpool
+  agent_name: ajdevvm
+
+  docker_service_connection: ganjiacr
+  container_registry: ganjiacr
+  container_dev_repo_name: dev_application
+
+
+  environment: development.dev
+  namespace: dev
+
+
+  tag: $(Build.SourceVersion)
+
+stages:
+  - stage: BuildandPUSHimagetoACR
+    jobs:
+      - job: Build_Push
+        pool: 
+         name: $(agent_pool)
+         demands:
+          - Agent.Name -equals $(agent_name)
+        steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: $(container_registry)
+              repository: $(container_dev_repo_name)
+              command: 'buildAndPush'
+              Dockerfile: '**/dockerfile'
+              tags: $(tag)
+          - task: CopyFiles@2
+            inputs:
+              SourceFolder: '$(System.DefaultWorkingDirectory)/manifests'
+              Contents: '**'
+              TargetFolder: '$(Build.ArtifactStagingDirectory)'
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'manifests'
+              publishLocation: 'Container'
+  - stage: Deploy_to_AKS
+    dependsOn: BuildandPUSHimagetoACR
+    jobs:
+      - deployment: 
+        displayName: aks_deploy
+        environment: $(environment)
+        pool: 
+         name: $(agent_pool)
+         demands:
+          - Agent.Name -equals $(agent_name)
+        #workspace:
+          #clean: all
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    buildType: 'current'
+                    artifactName: 'manifests'
+                    targetPath: '$(System.ArtifactsDirectory)/manifests'
+                - task: KubernetesManifest@0
+                  inputs:
+                    action: 'createSecret'
+                    #kubernetesServiceConnection: 'devenv-aksdevops-dev-1660734623942' # environment will take the service connection automatically
+                    namespace: $(namespace)
+                    secretType: 'dockerRegistry'
+                    secretName: 'ganjacr-azdevops-secret'
+                    dockerRegistryEndpoint: $(docker_service_connection)
+                - task: KubernetesManifest@0
+                  inputs:
+                    action: 'deploy'
+                    #kubernetesServiceConnection: 'devenv-aksdevops-dev-1660734623942' # environment will take the service connection automatically
+                    namespace: $(namespace)
+                    manifests: |
+                      $(System.ArtifactsDirectory)/manifests/deployment.yaml
+                      $(System.ArtifactsDirectory)/manifests/services.yaml
+                    containers: 'ganjiacr.azurecr.io/ajdevops/$(container_dev_repo_name):$(Build.SourceVersion)'
+                    imagePullSecrets: 'ganjacr-azdevops-secret'
+        
