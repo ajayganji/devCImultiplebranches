@@ -68,8 +68,9 @@ stages:
                     #kubernetesServiceConnection: 'devenv-aksdevops-dev-1660734623942' # environment will take the service connection automatically
                     namespace: $(namespace)
                     secretType: 'dockerRegistry'
-                    secretName: 'ganjacr-azdevops-secret'
+                    secretName: 'ganjacr-azdevops-secret-007'
                     dockerRegistryEndpoint: $(docker_service_connection)
+
                 - task: KubernetesManifest@0
                   inputs:
                     action: 'deploy'
