@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: myapp3-container
-          image: ganjiacr.azurecr.io/ajdevops/app1:$(Build.SourceVersion)
+          image: ganjiacr.azurecr.io/ajdevops/$(container_dev_repo_name):$(Build.SourceVersion)
           ports: 
             - containerPort: 80
