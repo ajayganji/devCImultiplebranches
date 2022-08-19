@@ -82,4 +82,3 @@ stages:
                       $(System.ArtifactsDirectory)/manifests/services.yaml
                     containers: 'ganjiacr.azurecr.io/${{variables.container_qa_repo_name}}:$(tag)'
                     imagePullSecrets: 'acr-secret-02'
-        
