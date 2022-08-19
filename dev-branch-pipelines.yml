@@ -78,6 +78,6 @@ stages:
                     manifests: |
                       $(System.ArtifactsDirectory)/manifests/deployment.yaml
                       $(System.ArtifactsDirectory)/manifests/services.yaml
-                    containers: 'ganjiacr.azurecr.io/ajdevops/dev_application:$(Build.SourceVersion)'
+                    containers: 'ganjiacr.azurecr.io/ajdevops/dev_application:$(tag)'
                     imagePullSecrets: 'ganjacr-azdevops-secret'
         
