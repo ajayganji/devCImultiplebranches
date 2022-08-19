@@ -1,9 +1,4 @@
-trigger:
-  branches:
-    include:
-      - dev
-    exclude:
-      - main
+trigger: none
 
 variables:
   agent_pool: userpool
