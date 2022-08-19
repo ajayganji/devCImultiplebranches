@@ -12,8 +12,8 @@ variables:
   docker_service_connection: ganjiacr
   container_registry: ganjiacr
   container_qa_repo_name: QA_application
-  environment: development.dev
-  namespace: dev
+  environment: qa.qa
+  namespace: qa
   tag: $(Build.SourceVersion)
 
 stages:
@@ -80,5 +80,5 @@ stages:
                     manifests: |
                       $(System.ArtifactsDirectory)/manifests/deployment.yaml
                       $(System.ArtifactsDirectory)/manifests/services.yaml
-                    containers: 'ganjiacr.azurecr.io/${{variables.container_qa_repo_name}}:$(tag)'
+                    containers: 'ganjiacr.azurecr.io/QA_application:$(tag)'
                     imagePullSecrets: 'acr-secret-02'
