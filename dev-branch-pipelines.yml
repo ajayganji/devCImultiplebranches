@@ -2,7 +2,7 @@ trigger:
   branches:
     include:
       - dev
-    exclude:
+    exclude:  
       - main
 
 variables:
